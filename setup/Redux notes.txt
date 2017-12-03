@@ -1,0 +1,70 @@
+Maintain state using Redux. 
+
+Data coming from DB is a state.
+
+Date is available in tree structure.
+
+Business Logic makes a call using AJAX to the DB and gets the data.
+
+Component tree + State tree = DOM tree
+
+
+State management was done using Flux in past. But not it is Redux. Disadv of Flux is that they had multiple stores which caused issues. 
+
+Reusuable service libraries are created usin Redux. 
+
+
+MVC and MVVM is too difficult to manage, hence FB went for Redux which uses uni directional flows.
+
+
+Andular 1, MVC, Angular 2 uni directional arch.
+
+
+
+Minimal key updates will happen using Immutable.js (a technique to apply the changes)
+
+
+
+Redux store provides API to maintain the store, state etc. No business logic here. Only data.
+
+
+Action 
+
+ - any change that caused application change is action
+
+
+Reducers
+********
+
+
+Actions goes to Reducers.
+
+Reducers takes an action and update part of application state. All business logic resides in the reducers.
+
+Unit testing can be done using Mocha or Jasmine.
+
+
+From UI, now the store has changed. 
+
+Container has to subscribe to store so that it gets the update from the store. For that we have the Provider.
+
+
+Two types of components.
+
+Container component  - Consumers
+Dumb components - Textboxes etc (No handlers, they have only props) 
+
+
+Store to container is PUSH based.
+
+
+
+
+
+
+
+
+
+
+
+

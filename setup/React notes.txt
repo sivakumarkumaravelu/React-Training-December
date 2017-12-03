@@ -239,7 +239,33 @@ Work with controlled component and not un controlled.
 Context cant be passed from outside, whereas props can be passed from outside.
 
 
+Component loading methods
+*************************
 
+Refer ComponentLifeCycle.js
+
+
+Routing
+*******
+
+For any HTML, we need to give the base href.
+
+Redux
+*****
+
+Store is a container - state container for entire project.
+
+This store is connected using a provider called connect provider. 
+
+Whenever change in store is there, data flows from top to bottom.
+
+All handlers can be removed and only actions will be pointed.
+
+
+
+{this.props.children} in main.component.jsx. This is a placeholder.
+
+Store in redux is a const.
 
 
 
