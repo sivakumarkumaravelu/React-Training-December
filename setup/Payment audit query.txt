@@ -1,0 +1,48 @@
+WITH CONF_MASK_ENTL AS (SELECT /*+materialize*/ division_id, setting_value AS mask_flag, resource_biz_id 
+                                  FROM TABLE (TBOS_USER.CUSTUSERENT.GETENTSETTING(:userId, NULL, 'payrollpayMaskconfData',NULL,'account'))), 
+                                  USR_ACCT_ENTL AS (SELECT /*+materialize */ e.*,CASE WHEN PRODUCT_ID LIKE '%payrollpay' and mask_flag='1' then 'Y' else 'N' end  AS MASK_FLAG 
+                                  FROM table(TBOS_USER.CUSTUSERENT.getentsum(:userId, NULL,'pf_cashmgmt',NULL,'f_paymgmt',NULL,'account')) e, CONF_MASK_ENTL
+                                 WHERE e.division_id = CONF_MASK_ENTL.division_id AND e.resource_biz_id = CONF_MASK_ENTL.resource_biz_id)
+               SELECT HEADER_DIVISION_ID  AS "divisionId",ACL_PRODUCT AS "ACL",' ' AS "divisionName",HEADER_REF AS "headerRef", HEADER_AMOUNT AS "headerAmt" ,' ' AS "paymentMtd",' ' AS "headerCrncy",  HEADER_BATCH_NAME AS "batchName",' ' AS "headerCustomerRef",
+              PAYMENT_DATE AS "paymentDate", ENTRY_TYPE AS "entryType", CASE WHEN ENTRY_TYPE IS NOT NULL THEN ENTRY_TYPE ELSE '-' END AS "productType", ENTRY_MODE AS "entryMode", QUEUE  AS "pmtStatus",CASE WHEN ACCOUNT_BRANCH_CODE IS NOT NULL THEN ACCOUNT_BRANCH_CODE||'-'||HEADER_ACCOUNT_NO ELSE  HEADER_ACCOUNT_NO  END AS "fromAcctId",
+              ' ' AS "customerAcctName", HEADER_COUNTRY AS "customerAcctCountry", BRANCH_NAME AS "branchName", AUDIT_USER AS "auditUser", AUDIT_CODE AS "auditCode",
+                           CAST(AUDIT_TIME AS DATE) AS "auditTime", PAYMENT_REF AS "paymentId", PRODUCT AS "product", AUDIT_PARAMS AS "auditParams", ACTION_TO AS "actionTo",
+                           INST_SEQ_NUM AS "instSeqNo", INSTRUCTION_ID AS "instructionId", DECODE(MASK_FLAG, 'Y', 'XXXX', (CASE WHEN (ENTRY_TYPE = 'BPAY') THEN BILLER_SHORT_NAME ELSE BENEFICIARY_NAME END)) AS "beneficiaryName", 'P' AS flag, MASK_FLAG AS "maskFlag",
+                           ' ' AS "customerAcctNickName"
+              FROM ( (SELECT       HEADER_DIVISION_ID, ACL_PRODUCT,HEADER_REF,HEADER_AMOUNT , HEADER_BATCH_NAME, ENTRY_TYPE, ENTRY_MODE, QUEUE, ACCOUNT_BRANCH_CODE ,HEADER_ACCOUNT_NO, HEADER_COUNTRY, PAYMENT_DATE, B.BRANCH_NAME AS BRANCH_NAME,PD.BILLER_SHORT_NAME AS BILLER_SHORT_NAME,
+                                         PA.USER_ALIAS AS AUDIT_USER, PA.AUDIT_CODE AS AUDIT_CODE, PA.CREATED_TS AS AUDIT_TIME, NULL AS PAYMENT_REF, NULL AS PRODUCT, PA.AUDIT_PARAMS AS AUDIT_PARAMS,
+                                         CASE WHEN PA.DETAIL_ID IS NOT NULL THEN 'Payment Instructions' ELSE 'Payment Header' END AS ACTION_TO,
+                                         PD.SEQ_NUM AS INST_SEQ_NUM, PD.PAYMENT_REF AS INSTRUCTION_ID, PD.PARTY_NAME AS BENEFICIARY_NAME, MASK_FLAG                                
+                           FROM TBOS_USER.PAYMENT_AUDIT PA
+                           INNER JOIN TBOS_USER.PAYMENT_HEADER_HIST PH ON PA.HEADER_ID = PH.HEADER_ID
+                           LEFT JOIN TBOS_USER.PAYMENT_DETAIL_HIST PD ON PA.DETAIL_ID = PD.DETAIL_ID
+                           INNER JOIN USR_ACCT_ENTL U ON PH.HEADER_ACCOUNT_ID = U.RESOURCE_BIZ_ID AND PH.HEADER_DIVISION_ID = U.DIVISION_ID AND PH.ACL_PRODUCT = U.PRODUCT_ID
+                           INNER JOIN TBOS_USER.VW_BRANCH_DETAILS B ON B.BRANCH_CODE = NVL(PH.ACCOUNT_BRANCH_CODE,PH.HEADER_CBS_CD)
+                           INNER JOIN TBOS_USER.QUEUE_HIST Q ON Q.HEADER_ID   = PH.HEADER_ID AND Q.DETAIL_ID IS NULL
+                           --WHERE {tbos.whereclause}
+                           AND PA.USR_ID != 'SYSTEM_USER' AND PA.AUDIT_CODE != 'detail.deleted.notify' ) )
+              union all
+              SELECT HEADER_DIVISION_ID  AS "divisionId",ACL_PRODUCT AS "ACL", HEADER_DIVISION_NAME AS "divisionName", HEADER_REF AS "headerRef",HEADER_AMOUNT AS "headerAmt" , PMT_METHOD AS "paymentMtd",HEADER_CURRENCY AS "headerCrncy",HEADER_BATCH_NAME AS "batchName", BULK_REF AS "headerCustomerRef",
+                     PAYMENT_DATE AS "paymentDate", ENTRY_TYPE AS "entryType" ,(CASE WHEN ENTRY_TYPE IS NOT NULL THEN ENTRY_TYPE||(CASE WHEN PMT_METHOD IS NOT NULL THEN '-'||PMT_METHOD  END)
+                     ELSE '-' END)  AS "productType", ENTRY_MODE AS "entryMode", QUEUE AS "pmtStatus", CASE WHEN ACCOUNT_BRANCH_CODE IS NOT NULL THEN ACCOUNT_BRANCH_CODE||'-'||HEADER_ACCOUNT_NO ELSE  HEADER_ACCOUNT_NO  END AS "fromAcctId",
+
+                             HEADER_ACCOUNT_NAME AS "customerAcctName", HEADER_ACCOUNT_COUNTRY AS "customerAcctCountry", BRANCH_NAME AS "branchName", AUDIT_USER AS "auditUser",
+                             AUDIT_CODE AS "auditCode", CAST(AUDIT_TIME AS DATE) AS "auditTime", PAYMENT_REF AS "paymentId", PRODUCT AS "product", AUDIT_PARAMS AS "auditParams",
+                             ACTION_TO AS "actionTo", INST_SEQ_NUM AS "instSeqNo", INSTRUCTION_ID AS "instructionId", DECODE(MASK_FLAG, 'Y', 'XXXX', DECODE(ENTRY_TYPE,'ACTTRF',HEADER_ACCOUNT_NICKNAME,(CASE WHEN (ENTRY_TYPE = 'BPAY') THEN BILLER_SHORT_NAME ELSE BENEFICIARY_NAME END))) AS "beneficiaryName", 'C' AS flag, MASK_FLAG AS "maskFlag",
+                             HEADER_ACCOUNT_NICKNAME AS "customerAcctNickName"
+              FROM ( (SELECT       HEADER_DIVISION_ID,ACL_PRODUCT, HEADER_DIVISION_NAME, HEADER_REF, HEADER_AMOUNT ,PH.PMT_METHOD,ACCOUNT_BRANCH_CODE,PH.HEADER_CURRENCY ,HEADER_BATCH_NAME, ENTRY_TYPE, ENTRY_MODE, Q.QUEUE, HEADER_ACCOUNT_NO, HEADER_ACCOUNT_NAME,BILLER_SHORT_NAME,
+                                         HEADER_ACCOUNT_COUNTRY, PAYMENT_DATE, B.BRANCH_NAME AS BRANCH_NAME, PA.USER_ALIAS AS AUDIT_USER, PA.AUDIT_CODE AS AUDIT_CODE, PA.CREATED_TS AS AUDIT_TIME,
+                                         NULL AS PAYMENT_REF, NULL AS PRODUCT, PA.AUDIT_PARAMS AS AUDIT_PARAMS, CASE WHEN PA.DETAIL_ID IS NOT NULL THEN 'Payment Instructions' ELSE 'Payment Header' END AS ACTION_TO,
+                                      PD.SEQ_NUM AS INST_SEQ_NUM, PD.PAYMENT_REF AS INSTRUCTION_ID, DECODE(ENTRY_TYPE,'ACTTRF',HEADER_ACCOUNT_NICKNAME,PD.PARTY_NAME) AS BENEFICIARY_NAME,
+                                      CASE WHEN (PH.ENTRY_TYPE = 'ACTTRF') THEN (SELECT CUSTOMER_REF FROM TBOS_USER.PAYMENT_DETAIL WHERE HEADER_ID = PH.HEADER_ID ) ELSE PH.BULK_REF END AS BULK_REF,
+                                         MASK_FLAG, HEADER_ACCOUNT_NICKNAME
+                                  FROM TBOS_USER.PAYMENT_AUDIT PA
+                                  INNER JOIN TBOS_USER.PAYMENT_HEADER PH ON PA.HEADER_ID = PH.HEADER_ID
+                                  LEFT JOIN TBOS_USER.PAYMENT_DETAIL PD ON PA.DETAIL_ID = PD.DETAIL_ID
+                                  INNER JOIN USR_ACCT_ENTL U ON PH.HEADER_ACCOUNT_ID = U.RESOURCE_BIZ_ID AND PH.HEADER_DIVISION_ID = U.DIVISION_ID AND PH.ACL_PRODUCT = U.PRODUCT_ID
+                                  INNER JOIN TBOS_USER.VW_BRANCH_DETAILS B ON B.BRANCH_CODE = NVL(PH.ACCOUNT_BRANCH_CODE,PH.HEADER_CBS_CD)
+                                  INNER JOIN TBOS_USER.QUEUE Q ON Q.HEADER_ID   = PH.HEADER_ID AND Q.DETAIL_ID IS NULL
+                                 --- WHERE {tbos.whereclause}
+                                 where HEADER_REF = '20000095805' 
+                                  AND PA.USR_ID != 'SYSTEM_USER' AND PA.AUDIT_CODE != 'detail.deleted.notify') ) 
+                                  order by "divisionId","entryType","ACL","headerRef", "instSeqNo" NULLS FIRST, "auditTime"

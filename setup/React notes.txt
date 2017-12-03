@@ -1,0 +1,270 @@
+Profiler video - Angular failure - check in Youtube
+
+React is just view library. 
+Angular is end to end.
+
+React program where we need to notify in real time to many. 
+
+Redux is a state manager. It is a service library. 
+
+
+View will react according to the data.
+
+DIRT - Data intensive real time technology. 
+
+NGRedux - Angular redux integration. 
+
+When to go for react and when for Angular
+
+- fast dom updates in both. 
+
+
+
+MVVM - full stack etc for enterprise gofor Angular. AOT 
+
+- Ahead of Time, lazy loading. 
+   
+Small application, lesser modules etc go for React.
+
+JSX is used by React its painful for it. Angular other side it uses type script which is neat and useful. JSX is not purely OOO. 
+
+
+Both Angular and React uses Virtal DOM --- Very imp..... Between source code and actual DOM we have this Virtual DOM.
+Both are for single page application. Reactive SPA.
+
+
+Code generated at run time is what matters. Type script offers better performance.
+
+ECMA 6 - about 18 new features, that React uses
+
+Tree shaking... available in Angular and not in React.....
+
+
+Positives of React:
+
+- View lib can be taken care one team and Service can be taken care by other.... using Redux.
+- Producer and Consumer arch is good.
+- Google copied all concept.
+- React view integrated with Angular, backbone to react.... all integration possible. 
+- React becomes more stronger with Redux.
+- Separation of concern is super. 
+- JSX debugging is complex. Type script debugging with Angualr is good. React plans to develop this typescript. 
+
+Pull - Ajax - Extract data (Issue is long polling. Every min we ask server.) Live updates it is a menace, outdated now.
+Push - Server side push happens using Websocket.  Are we fast enough to update the view.? FB pointed this fault to Google. 
+
+
+
+Virtual DOM
+***********
+
+React is isomorphic - Runs in both server and client.
+React allows us to create custom tags. - Declarative programming.
+
+Know the DOM tree, then separate to components.
+
+
+Diffing and reconciliation algorithm..... 
+
+Step 1 : Identify the tree structure.
+         
+         JSX we need to write. 
+
+Babel is a transpinder takes JSX code, (Transpilation - one format to other in same format)
+
+HTML + CSS + ES6.-> ES5 + CSS
+
+
+
+Grunt, GULP -  Angular
+Webpack - React
+
+browserify is a part of Webpack. 
+
+
+Entire application is kept as string as object graph. In memory of the browser.
+
+
+You tube example:
+
+
+
+Any data we post it will be reflected in Store (Redux which manages the state). Then the data flows from top to bottom called uni directional data flow. 
+
+When data is not continuously changing dont use React. 
+
+
+
+Typescript is future
+
+
+Databases, File IO, Sockets all cannot be done using JS. 
+
+REPL - Read Evaluate Print Loop
+
+
+
+
+npm always looks for package.json.
+
+
+Exercise:
+
+npm -v
+node -v
+
+- Setting the package.json
+
+npm init
+
+
+Node is the platform to build application.
+
+
+
+Install babel
+**************
+
+
+-g available everywhere, can be used across project  ( Eg: Webpack)
+--save specific to project, be put in dependency section. (Eg: Specific to project)
+
+Babel will be for dev only so dev dependncy, dont push to PROD.....  In order to not put in PROD, use -dev
+
+
+
+
+
+npm init -y   (-y for all questions asked)
+
+package.json is used to refer all the dependencies required for project.
+
+
+
+tsx - type script extension
+
+
+
+Loader for transpilation
+
+Node modules are updated
+
+
+
+Dependencies and plugin
+***********************
+
+npm install babel-core babel-loader --save-dev
+npm install babel-preset-react --save-dev
+npm install babel-preset-es2015 --save-dev
+
+npm install webpack webpack-dev-server --save-dev
+
+
+npm install react --save
+npm install react-dom --save
+
+
+
+
+
+
+Key points:
+**********
+
+Under the return method only one tag will be present. 
+
+
+--hot - hot replacement, without refresh
+
+
+
+Very important:
+***************
+
+Props - properties passed between components.
+   
+State - State for the components, state cannot be passed between its within component.
+
+
+Passing data from parent to child happens via props...
+
+
+How to pass data from child to parent? 
+
+this -> Stateful
+
+
+
+
+                <h2>{this.props.headerProp}</h2> 
+
+
+State cannot be validated.  (Can be initiated only in constructor)
+
+Props can be validated.
+
+
+Event handling
+***************
+
+From child to parent how to pass information.	
+
+Through refs and ref we can achieve the communication from one layer to other above the heirarchy.
+
+
+
+
+Binding or registering the event handler
+
+Types of components only in REACT
+
+Controlled component 
+********************
+
+dont make static text, give a value through state.
+
+value={this.props.myDataProp} 
+
+Uncontrolled component
+**********************
+
+if we give value then i.e static then its uncontrolled. value="Simple"
+
+
+Work with controlled component and not un controlled.
+
+
+
+Context cant be passed from outside, whereas props can be passed from outside.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
