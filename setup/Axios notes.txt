@@ -1,0 +1,17 @@
+Axios works on Promis and it is aynchronous. AXIOS supports 4 methods. Get, Put, Delete... 
+
+
+
+use-strict, use best practices.
+
+
+
+Template literal String. HTML+CSS+JS = template.
+
+` - putting in back tick, java script literal should be used with ${ Line 19 index.js, refer.   
+
+
+
+
+
+Wherever connect is there its a container.

@@ -110,4 +110,13 @@ babel-polyfill - for cross browser compatibility
 
 
 
+index.js used to combine all the files.
+
+Say in reducers folder we have index.js which combines all the reducers.
+
+when we use command import allReducers from './reducers' it looks for index.js and it combines all the reducers.
+
+
+
+
 
