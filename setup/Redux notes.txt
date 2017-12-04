@@ -31,11 +31,13 @@ Redux store provides API to maintain the store, state etc. No business logic her
 Action 
 
  - any change that caused application change is action
+ - has action type and payload.
 
 
 Reducers
 ********
 
+We will write a switch case, i.e based on actions what has to be done.
 
 Actions goes to Reducers.
 
@@ -58,10 +60,51 @@ Dumb components - Textboxes etc (No handlers, they have only props)
 Store to container is PUSH based.
 
 
+Whenever state is changed, DOM tree string is re-rendered. Which will kill performance so keep the DOM limited.
+
+Entire string is parsed, diffing and reconcilation algo is applied and re-rendered.
 
 
 
+All reducers are pure functions.
 
+
+Providers
+*********
+
+Makes stire availabe to all containers.
+
+
+Containers
+**********
+
+Fetch app state data and use it to render.
+
+
+Componenets
+***********
+Application states are changed its updated.
+
+
+AXIOS middleware
+****************
+
+Between Action and Reducers we have a middle ware. Eg: Axios middleware
+
+Between action and Reducer exists the Middleware
+
+Middleware is just JS methods.
+
+
+Limitations
+***********
+
+Nested containers not possbile.
+More than one reducers possible.
+
+react-redux plugin offers connectivity between Store and container.
+
+babel-polyfill - for cross browser compatibility
 
 
 
